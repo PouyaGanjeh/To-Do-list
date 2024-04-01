@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drag and Drop To-Do List</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.section {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#todo { border-top: 5px solid #ffc107; }
+#inprogress { border-top: 5px solid #007bff; }
+#done { border-top: 5px solid #28a745; }
+#nexttime { border-top: 5px solid #dc3545; }
+
+.task {
+    background-color: #fff;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    cursor: move;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task input {
+    margin-right: 5px;
+}
+
+.task input[type="button"] {
+    cursor: pointer;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.task input[type="text"] {
+    border: none;
+    outline: none;
+    width: 80%;
+}
+
+input[type="text"] {
+    padding: 5px;
+    width: 70%;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+}
+
+input[type="button"] {
+    padding: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.date {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div id="todo" class="section" ondrop="drop(event, 'todo')" ondragover="allowDrop(event)">
+        <h2>To Do</h2>
+        <p class="date">Last updated: <span id="todoDate"></span></p>
+    </div>
+    <div id="inprogress" class="section" ondrop="drop(event, 'inprogress')" ondragover="allowDrop(event)">
+        <h2>In Progress</h2>
+        <p class="date">Last updated: <span id="inprogressDate"></span></p>
+    </div>
+    <div id="done" class="section" ondrop="drop(event, 'done')" ondragover="allowDrop(event)">
+        <h2>Done</h2>
+        <p class="date">Last updated: <span id="doneDate"></span></p>
+    </div>
+    <div id="nexttime" class="section" ondrop="drop(event, 'nexttime')" ondragover="allowDrop(event)">
+        <h2>Next Time</h2>
+        <p class="date">Last updated: <span id="nexttimeDate"></span></p>
+    </div>
+</div>
+
+<div class="container">
+    <input type="text" id="taskInput" placeholder="Enter a task...">
+    <input type="button" value="Add Task" onclick="addTask()">
+</div>
+
+<script>
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}
+
+function drop(event, status) {
+    event.preventDefault();
+    var data = event.dataTransfer.getData("text");
+    event.target.appendChild(document.getElementById(data));
+
+    var currentDate = new Date().toLocaleString();
+    document.getElementById(status + 'Date').textContent = currentDate;
+}
+
+function addTask() {
+    var taskInput = document.getElementById('taskInput').value;
+    if (taskInput.trim() !== '') {
+        var task = document.createElement('div');
+        task.className = 'task';
+        task.id = 'task' + (new Date()).getTime();
+        task.draggable = true;
+        task.addEventListener('dragstart', drag);
+        task.innerHTML = '<input type="text" value="' + taskInput + '" readonly><input type="button" value="Delete" onclick="this.parentNode.remove()">';
+        document.getElementById('todo').appendChild(task);
+        document.getElementById('taskInput').value = '';
+    }
+}
+</script>
+
+</body>
+</html>
